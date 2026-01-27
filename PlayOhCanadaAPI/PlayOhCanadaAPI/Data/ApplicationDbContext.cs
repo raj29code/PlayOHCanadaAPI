@@ -11,6 +11,9 @@ namespace PlayOhCanadaAPI.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Sport> Sports { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -57,6 +60,65 @@ namespace PlayOhCanadaAPI.Data
                     .HasMaxLength(200);
             });
 
+            // Configure Sport entity
+            modelBuilder.Entity<Sport>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                
+                entity.HasIndex(e => e.Name)
+                    .IsUnique();
+            });
+
+            // Configure Schedule entity
+            modelBuilder.Entity<Schedule>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasIndex(e => new { e.SportId, e.StartTime });
+
+                entity.HasOne(e => e.Sport)
+                    .WithMany(s => s.Schedules)
+                    .HasForeignKey(e => e.SportId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.CreatedByAdmin)
+                    .WithMany()
+                    .HasForeignKey(e => e.CreatedByAdminId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            });
+
+            // Configure Booking entity
+            modelBuilder.Entity<Booking>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                // Unique constraint: A user cannot book the same schedule twice
+                entity.HasIndex(e => new { e.ScheduleId, e.UserId })
+                    .IsUnique()
+                    .HasFilter("\"UserId\" IS NOT NULL");
+
+                entity.HasOne(e => e.Schedule)
+                    .WithMany(s => s.Bookings)
+                    .HasForeignKey(e => e.ScheduleId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.BookingTime)
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                // Validation: Either UserId or GuestName must be present
+                entity.HasCheckConstraint(
+                    "CK_Booking_UserOrGuest",
+                    "\"UserId\" IS NOT NULL OR \"GuestName\" IS NOT NULL"
+                );
+            });
         }
     }
 }

@@ -39,6 +39,21 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// Configure CORS
+var corsOrigins = builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>() 
+    ?? new[] { "http://localhost:5173" };
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(corsOrigins)
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
+
 // Register Services
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -50,7 +65,7 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Auto-migrate database and seed admin user
+// Auto-migrate database and seed data
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -76,6 +91,22 @@ using (var scope = app.Services.CreateScope())
             dbContext.Users.Add(adminUser);
             await dbContext.SaveChangesAsync();
         }
+        
+        // Seed sports if they don't exist
+        if (!await dbContext.Sports.AnyAsync())
+        {
+            var sports = new[]
+            {
+                new Sport { Name = "Tennis", IconUrl = "https://cdn-icons-png.flaticon.com/512/889/889456.png" },
+                new Sport { Name = "Badminton", IconUrl = "https://cdn-icons-png.flaticon.com/512/2913/2913133.png" },
+                new Sport { Name = "Basketball", IconUrl = "https://cdn-icons-png.flaticon.com/512/889/889453.png" },
+                new Sport { Name = "Soccer", IconUrl = "https://cdn-icons-png.flaticon.com/512/53/53283.png" },
+                new Sport { Name = "Volleyball", IconUrl = "https://cdn-icons-png.flaticon.com/512/889/889502.png" },
+                new Sport { Name = "Pickleball", IconUrl = "https://cdn-icons-png.flaticon.com/512/10529/10529471.png" }
+            };
+            dbContext.Sports.AddRange(sports);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }
 
@@ -89,6 +120,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Enable CORS - must be placed before Authentication and Authorization
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();

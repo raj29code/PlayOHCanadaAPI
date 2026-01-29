@@ -10,21 +10,44 @@ namespace PlayOhCanadaAPI.Services
     {
         string GenerateToken(User user);
         ClaimsPrincipal? ValidateToken(string token);
+        DateTime GetTokenExpiration(string token);
     }
 
     public class JwtService : IJwtService
     {
         private readonly IConfiguration _configuration;
+        private const int MinimumSecretKeyLength = 32;
 
         public JwtService(IConfiguration configuration)
         {
             _configuration = configuration;
+            ValidateConfiguration();
+        }
+
+        private void ValidateConfiguration()
+        {
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var secretKey = jwtSettings["SecretKey"];
+
+            if (string.IsNullOrWhiteSpace(secretKey))
+            {
+                throw new InvalidOperationException(
+                    "JWT SecretKey is not configured. Please set JwtSettings:SecretKey in appsettings.json or user secrets.");
+            }
+
+            if (secretKey.Length < MinimumSecretKeyLength)
+            {
+                throw new InvalidOperationException(
+                    $"JWT SecretKey must be at least {MinimumSecretKeyLength} characters long. " +
+                    $"Current length: {secretKey.Length} characters. " +
+                    "Please update JwtSettings:SecretKey in appsettings.json or user secrets.");
+            }
         }
 
         public string GenerateToken(User user)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+            var secretKey = jwtSettings["SecretKey"]!;
             var issuer = jwtSettings["Issuer"] ?? "PlayOhCanadaAPI";
             var audience = jwtSettings["Audience"] ?? "PlayOhCanadaAPI";
             var expiryMinutes = int.Parse(jwtSettings["ExpiryMinutes"] ?? "60");
@@ -56,7 +79,7 @@ namespace PlayOhCanadaAPI.Services
         public ClaimsPrincipal? ValidateToken(string token)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+            var secretKey = jwtSettings["SecretKey"]!;
             var issuer = jwtSettings["Issuer"] ?? "PlayOhCanadaAPI";
             var audience = jwtSettings["Audience"] ?? "PlayOhCanadaAPI";
 
@@ -82,6 +105,13 @@ namespace PlayOhCanadaAPI.Services
             {
                 return null;
             }
+        }
+
+        public DateTime GetTokenExpiration(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+            return jwtToken.ValidTo;
         }
     }
 }

@@ -60,9 +60,11 @@
 
 - **User Registration** with email and password
 - **User Login** with JWT token generation
-- **User Profile** retrieval
+- **User Logout** with token revocation (blacklist)
+- **User Profile** retrieval with `isAdmin` flag
 - **Role-Based Authorization** (Admin/User)
 - **Secure Password Hashing** using BCrypt
+- **CORS Configuration** for frontend integration
 - **PostgreSQL Database** with EF Core
 - **Automatic Migrations** in development
 - **Interactive API Documentation** with Scalar UI
@@ -91,6 +93,13 @@
 
 ### JWT Settings
 
+The application validates JWT configuration at startup to ensure security best practices.
+
+**Validation Rules:**
+- ? SecretKey must be at least **32 characters** long
+- ? SecretKey cannot be null or empty
+- ? Application fails at startup with descriptive error if invalid
+
 **Development** (`appsettings.Development.json`):
 ```json
 {
@@ -115,17 +124,45 @@
 }
 ```
 
+**Generate a Secure Key:**
+
+```powershell
+# PowerShell (Windows)
+-join ((48..57) + (65..90) + (97..122) | Get-Random -Count 64 | ForEach-Object {[char]$_})
+
+# Bash (Linux/Mac)
+openssl rand -base64 48
+```
+
+For detailed JWT configuration guidance, see [JWT_SECRETKEY_VALIDATION.md](JWT_SECRETKEY_VALIDATION.md)
+
+### CORS Settings
+
+Configure allowed origins in `appsettings.json`:
+```json
+{
+  "CorsSettings": {
+    "AllowedOrigins": [
+      "http://localhost:5173",
+      "https://localhost:5173",
+      "https://your-production-domain.com"
+    ]
+  }
+}
+```
+
 ?? **IMPORTANT**: 
 - Never commit production secrets to Git
 - Use User Secrets or Azure Key Vault for production
-- Generate a strong random key (32+ characters)
+- Generate a strong random key (64+ characters recommended)
+- Application will not start if SecretKey is invalid
 
 ### Setting User Secrets (Recommended)
 
 ```bash
 cd PlayOhCanadaAPI
 dotnet user-secrets init
-dotnet user-secrets set "JwtSettings:SecretKey" "YourSecureRandomKey"
+dotnet user-secrets set "JwtSettings:SecretKey" "YourSecureRandomKey64CharactersOrMoreForBetterSecurity!"
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "YourConnectionString"
 ```
 
@@ -144,19 +181,26 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "YourConnectionStr
    - Paste token and save
    - Now test protected endpoints
 
-### Method 2: Using PowerShell Script
+### Method 2: Using PowerShell Scripts
 
+**Test Authentication Flow:**
 ```powershell
 # Make sure the application is running first
 .\test-api.ps1
 ```
 
-This script will:
+**Test Logout Feature:**
+```powershell
+# Test complete logout workflow
+.\test-logout.ps1
+```
+
+These scripts will:
 - Register a new user
 - Login with credentials
 - Get user profile
-- Test protected endpoints
-- Test public endpoints
+- Test logout functionality
+- Verify token revocation
 
 ### Method 3: Using cURL
 
@@ -192,6 +236,63 @@ curl -X GET https://localhost:7063/api/auth/me \
   -k
 ```
 
+**Logout:**
+```bash
+curl -X POST https://localhost:7063/api/auth/logout \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -k
+```
+
+## ?? API Endpoints
+
+### Authentication Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/api/auth/register` | Register new user | No |
+| POST | `/api/auth/login` | Login with credentials | No |
+| POST | `/api/auth/logout` | Logout and revoke token | Yes |
+| GET | `/api/auth/me` | Get current user profile | Yes |
+
+### Response Examples
+
+**Login/Register Response:**
+```json
+{
+  "userId": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "+1234567890",
+  "role": "User",
+  "isAdmin": false,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expiresAt": "2024-01-02T10:00:00Z"
+}
+```
+
+**User Profile Response:**
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "+1234567890",
+  "role": "User",
+  "isAdmin": false,
+  "createdAt": "2024-01-01T10:00:00Z",
+  "lastLoginAt": "2024-01-01T11:00:00Z"
+}
+```
+
+**Logout Response:**
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+For detailed logout documentation, see [LOGOUT_FEATURE.md](LOGOUT_FEATURE.md)
+
 ## ?? Database Schema
 
 ### Users Table
@@ -211,9 +312,21 @@ curl -X GET https://localhost:7063/api/auth/me \
 | IsPhoneVerified | boolean | DEFAULT false |
 | IsEmailVerified | boolean | DEFAULT false |
 
+### RevokedTokens Table
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| Id | int | PRIMARY KEY, AUTO_INCREMENT |
+| Token | varchar(500) | NOT NULL, INDEXED |
+| UserId | int | NOT NULL |
+| RevokedAt | timestamp | NOT NULL, DEFAULT now() |
+| ExpiresAt | timestamp | NOT NULL, INDEXED |
+
 ### Indexes
 - Unique index on `Email`
 - Unique partial index on `Phone` (where not null)
+- Index on `RevokedTokens.Token`
+- Index on `RevokedTokens.ExpiresAt`
 
 ## ??? Project Architecture
 
@@ -226,6 +339,7 @@ PlayOhCanadaAPI/
 ?
 ??? Models/
 ?   ??? User.cs                     # User entity
+?   ??? RevokedToken.cs             # Revoked token entity
 ?   ??? DTOs/
 ?       ??? AuthDtos.cs             # Request/Response DTOs
 ?
@@ -237,9 +351,15 @@ PlayOhCanadaAPI/
 ?   ??? AuthService.cs              # Auth business logic
 ?   ??? IJwtService.cs              # JWT service interface
 ?   ??? JwtService.cs               # JWT token handling
+?   ??? ITokenBlacklistService.cs   # Token blacklist interface
+?   ??? TokenBlacklistService.cs    # Token revocation logic
+?
+??? Middleware/
+?   ??? TokenBlacklistMiddleware.cs # Token validation middleware
 ?
 ??? Migrations/                      # EF Core migrations
 ?   ??? XXXXXX_InitialCreate.cs
+?   ??? XXXXXX_AddRevokedTokenTable.cs
 ?
 ??? Properties/
 ?   ??? launchSettings.json         # Launch profiles
@@ -256,6 +376,19 @@ PlayOhCanadaAPI/
 
 ```bash
 dotnet ef migrations add MigrationName --project PlayOhCanadaAPI
+```
+
+### Apply Logout Migration
+
+```powershell
+.\add-logout-migration.ps1
+```
+
+Or manually:
+```bash
+cd PlayOhCanadaAPI
+dotnet ef migrations add AddRevokedTokenTable
+dotnet ef database update
 ```
 
 ### Rollback a Migration
@@ -357,10 +490,32 @@ public async Task<IActionResult> GetMyData()
 
 ### JWT Token Invalid
 
-1. Ensure `SecretKey` is at least 32 characters
-2. Check token expiry time
-3. Verify clock synchronization between systems
-4. Ensure Bearer token is properly formatted: `Bearer YOUR_TOKEN`
+1. **SecretKey too short or missing:**
+   - Error: `JWT SecretKey must be at least 32 characters long`
+   - Solution: Generate a new secure key (see [JWT_SECRETKEY_VALIDATION.md](JWT_SECRETKEY_VALIDATION.md))
+   - Update configuration with the new key (64+ characters recommended)
+
+2. **Token expired:**
+   - Check token expiry time in JWT settings
+   - Users must re-login to get a new token
+
+3. **Clock synchronization issues:**
+   - Verify clock synchronization between systems
+   - Ensure server time is accurate
+
+4. **Malformed token:**
+   - Ensure Bearer token is properly formatted: `Bearer YOUR_TOKEN`
+   - No extra spaces or characters
+
+5. **Configuration mismatch:**
+   - Ensure same SecretKey in all environments
+   - Verify Issuer and Audience match
+
+### Token Still Works After Logout
+
+1. Ensure migration is applied: `dotnet ef database update`
+2. Check middleware order in `Program.cs` (TokenBlacklist after Authentication)
+3. Verify token is being sent in Authorization header
 
 ### Migration Fails
 
@@ -382,11 +537,22 @@ Edit `PlayOhCanadaAPI/Properties/launchSettings.json`:
 ```
 Change ports 7063 and 5005 to available ports.
 
+### CORS Errors
+
+1. Verify frontend URL is in `CorsSettings:AllowedOrigins`
+2. Check middleware order (CORS before Authentication)
+3. Ensure credentials are enabled if using cookies/auth
+
 ## ?? API Documentation
 
 Full API documentation is available at:
 - **Scalar UI**: `https://localhost:7063/scalar/v1` (Development)
 - **OpenAPI JSON**: `https://localhost:7063/openapi/v1.json`
+
+Additional documentation:
+- **JWT SecretKey Validation**: [JWT_SECRETKEY_VALIDATION.md](JWT_SECRETKEY_VALIDATION.md)
+- **Logout Feature**: [LOGOUT_FEATURE.md](LOGOUT_FEATURE.md)
+- **Authentication**: [README_AUTH.md](PlayOhCanadaAPI/README_AUTH.md)
 
 ## ?? Contributing
 

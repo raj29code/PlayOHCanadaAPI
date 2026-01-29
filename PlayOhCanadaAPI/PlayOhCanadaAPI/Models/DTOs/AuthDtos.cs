@@ -41,6 +41,7 @@ namespace PlayOhCanadaAPI.Models.DTOs
         public string Email { get; set; } = string.Empty;
         public string? Phone { get; set; }
         public string Role { get; set; } = string.Empty;
+        public bool IsAdmin { get; set; }
         public string Token { get; set; } = string.Empty;
         public DateTime ExpiresAt { get; set; }
     }
@@ -52,6 +53,7 @@ namespace PlayOhCanadaAPI.Models.DTOs
         public string Email { get; set; } = string.Empty;
         public string? Phone { get; set; }
         public string Role { get; set; } = string.Empty;
+        public bool IsAdmin { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? LastLoginAt { get; set; }
     }

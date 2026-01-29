@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PlayOhCanadaAPI.Data;
+using PlayOhCanadaAPI.Middleware;
 using PlayOhCanadaAPI.Models;
 using PlayOhCanadaAPI.Services;
 using Scalar.AspNetCore;
@@ -15,7 +16,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Add JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+var secretKey = jwtSettings["SecretKey"];
+
+// Validate JWT configuration at startup
+if (string.IsNullOrWhiteSpace(secretKey))
+{
+    throw new InvalidOperationException(
+        "JWT SecretKey is not configured. Please set JwtSettings:SecretKey in appsettings.json or user secrets.");
+}
+
+if (secretKey.Length < 32)
+{
+    throw new InvalidOperationException(
+        $"JWT SecretKey must be at least 32 characters long. Current length: {secretKey.Length} characters. " +
+        "Please update JwtSettings:SecretKey in appsettings.json or user secrets.");
+}
 
 builder.Services.AddAuthentication(options =>
 {
@@ -57,6 +72,7 @@ builder.Services.AddCors(options =>
 // Register Services
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITokenBlacklistService, TokenBlacklistService>();
 
 builder.Services.AddControllers();
 
@@ -125,6 +141,10 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
+
+// Add token blacklist middleware after authentication
+app.UseTokenBlacklist();
+
 app.UseAuthorization();
 
 app.MapControllers();

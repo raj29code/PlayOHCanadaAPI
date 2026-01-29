@@ -14,6 +14,7 @@ namespace PlayOhCanadaAPI.Data
         public DbSet<Sport> Sports { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<RevokedToken> RevokedTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -118,6 +119,23 @@ namespace PlayOhCanadaAPI.Data
                     "CK_Booking_UserOrGuest",
                     "\"UserId\" IS NOT NULL OR \"GuestName\" IS NOT NULL"
                 );
+            });
+
+            // Configure RevokedToken entity
+            modelBuilder.Entity<RevokedToken>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasIndex(e => e.Token);
+
+                entity.HasIndex(e => e.ExpiresAt);
+
+                entity.Property(e => e.Token)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.RevokedAt)
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
         }
     }

@@ -11,21 +11,25 @@ namespace PlayOhCanadaAPI.Services
         Task<AuthResponse?> LoginAsync(LoginRequest request);
         Task<User?> GetUserByIdAsync(int userId);
         Task<User?> GetUserByEmailAsync(string email);
+        Task<bool> LogoutAsync(string token, int userId);
     }
 
     public class AuthService : IAuthService
     {
         private readonly ApplicationDbContext _context;
         private readonly IJwtService _jwtService;
+        private readonly ITokenBlacklistService _tokenBlacklistService;
         private readonly ILogger<AuthService> _logger;
 
         public AuthService(
             ApplicationDbContext context,
             IJwtService jwtService,
+            ITokenBlacklistService tokenBlacklistService,
             ILogger<AuthService> logger)
         {
             _context = context;
             _jwtService = jwtService;
+            _tokenBlacklistService = tokenBlacklistService;
             _logger = logger;
         }
 
@@ -72,6 +76,7 @@ namespace PlayOhCanadaAPI.Services
                 Email = user.Email,
                 Phone = user.Phone,
                 Role = user.Role,
+                IsAdmin = user.Role == UserRoles.Admin,
                 Token = token,
                 ExpiresAt = expiresAt
             };
@@ -112,9 +117,27 @@ namespace PlayOhCanadaAPI.Services
                 Email = user.Email,
                 Phone = user.Phone,
                 Role = user.Role,
+                IsAdmin = user.Role == UserRoles.Admin,
                 Token = token,
                 ExpiresAt = expiresAt
             };
+        }
+
+        public async Task<bool> LogoutAsync(string token, int userId)
+        {
+            try
+            {
+                var expiresAt = _jwtService.GetTokenExpiration(token);
+                await _tokenBlacklistService.RevokeTokenAsync(token, userId, expiresAt);
+                
+                _logger.LogInformation("User {UserId} logged out successfully", userId);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during logout for user {UserId}", userId);
+                return false;
+            }
         }
 
         public async Task<User?> GetUserByIdAsync(int userId)

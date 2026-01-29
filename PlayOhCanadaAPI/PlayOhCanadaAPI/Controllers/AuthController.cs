@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PlayOhCanadaAPI.Models;
 using PlayOhCanadaAPI.Models.DTOs;
 using PlayOhCanadaAPI.Services;
 using System.Security.Claims;
@@ -110,11 +111,49 @@ namespace PlayOhCanadaAPI.Controllers
                 Email = user.Email,
                 Phone = user.Phone,
                 Role = user.Role,
+                IsAdmin = user.Role == UserRoles.Admin,
                 CreatedAt = user.CreatedAt,
                 LastLoginAt = user.LastLoginAt
             };
 
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Logout the current user by revoking their token
+        /// </summary>
+        /// <returns>Logout confirmation</returns>
+        /// <response code="200">Logout successful</response>
+        /// <response code="401">Not authenticated</response>
+        [HttpPost("logout")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Logout()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return Unauthorized(new { message = "Invalid token" });
+            }
+
+            // Extract token from Authorization header
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized(new { message = "Token not found" });
+            }
+
+            var result = await _authService.LogoutAsync(token, userId);
+
+            if (!result)
+            {
+                return StatusCode(500, new { message = "Logout failed" });
+            }
+
+            return Ok(new { message = "Logged out successfully" });
         }
 
         // Phase 2: Phone Login Endpoint (placeholder)

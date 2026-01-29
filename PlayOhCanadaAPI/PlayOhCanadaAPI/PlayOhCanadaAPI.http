@@ -1,0 +1,6 @@
+@PlayOhCanadaAPI_HostAddress = http://localhost:5005
+
+GET {{PlayOhCanadaAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

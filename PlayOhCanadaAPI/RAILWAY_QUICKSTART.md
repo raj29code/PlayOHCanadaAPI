@@ -13,20 +13,19 @@ Railway couldn't automatically detect how to build your .NET 10 application.
 
 ## ? **Solution Implemented**
 
-Created Railway configuration files so Railway knows how to build and deploy your .NET 10 API.
+Created Docker configuration files so Railway knows how to build and deploy your .NET 10 API.
 
 ---
 
-## ?? **Files Created (4 files)**
+## ?? **Files Created (3 files)**
 
 | File | Purpose | Required |
 |------|---------|----------|
-| `Dockerfile` | Docker build instructions (most reliable) | ? Yes |
-| `nixpacks.toml` | Nixpacks configuration (Railway's native) | ?? Optional |
-| `railway.json` | Railway project settings | ?? Optional |
+| `Dockerfile` | Docker build instructions | ? Yes |
+| `railway.json` | Railway project settings | ? Yes |
 | `.dockerignore` | Optimize Docker builds | ? Recommended |
 
-**Railway will automatically use `Dockerfile` first** (most reliable for .NET 10).
+**Railway uses `Dockerfile` for all builds** (industry standard for .NET 10).
 
 ---
 
@@ -41,8 +40,8 @@ Created Railway configuration files so Railway knows how to build and deploy you
 
 **OR manually:**
 ```bash
-git add Dockerfile nixpacks.toml railway.json .dockerignore RAILWAY_BUILD_FIX.md
-git commit -m "Add Railway deployment configuration for .NET 10"
+git add Dockerfile railway.json .dockerignore RAILWAY_BUILD_FIX.md
+git commit -m "Add Railway Docker deployment configuration for .NET 10"
 git push origin feature/sports-api
 ```
 
@@ -108,7 +107,6 @@ Ensure your project structure is:
 ```
 PlayOHCanadaAPI/               ? Root (where you cloned)
 ??? Dockerfile                  ? Must be here
-??? nixpacks.toml               ? Must be here
 ??? railway.json                ? Must be here
 ??? PlayOhCanadaAPI/            ? Project folder
     ??? PlayOhCanadaAPI.csproj
@@ -125,7 +123,7 @@ Railway Dashboard ? Deployments ? Click failed deployment ? View logs
 **Common errors:**
 
 1. **"Project file not found"**
-   - **Fix:** Check path in Dockerfile: `COPY PlayOhCanadaAPI/PlayOhCanadaAPI.csproj`
+   - **Fix:** Check path in Dockerfile: `COPY PlayOhCanadaAPI/*.csproj`
 
 2. **"Port binding failed"**
    - **Fix:** Already handled in Dockerfile: `ENV ASPNETCORE_URLS=http://+:8080`
@@ -209,15 +207,13 @@ railway run dotnet ef database update --project PlayOhCanadaAPI
 
 ## ?? **Why Dockerfile?**
 
-**Dockerfile is the most reliable method for .NET 10 because:**
+**Dockerfile is the standard method for .NET 10 deployment because:**
 
 1. ? **Explicit .NET 10 SDK/Runtime** - Uses official Microsoft images
 2. ? **Multi-stage build** - Smaller final image (SDK ? Runtime)
 3. ? **Widely supported** - Railway has excellent Docker support
 4. ? **No version detection issues** - Explicitly states .NET 10
-5. ? **Future-proof** - Works regardless of Nixpacks updates
-
-**Nixpacks support for .NET 10 may be added later**, but Dockerfile works now.
+5. ? **Industry standard** - Works across all cloud platforms
 
 ---
 
@@ -259,5 +255,6 @@ railway shell
 ---
 
 **Status:** ? Ready to deploy  
+**Build Method:** Docker (industry standard)  
 **Last Updated:** Phase 2 - Railway Build Configuration  
 **Next:** Database migration (Step 5)

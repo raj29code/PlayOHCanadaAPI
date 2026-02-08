@@ -6,66 +6,57 @@
 
 **Root Cause:** Railway couldn't auto-detect how to build a .NET 10 application.
 
-**Solution:** Added explicit build configuration files.
+**Solution:** Added explicit Docker build configuration.
 
 ---
 
 ## ?? Files Added
 
-### 1. **`nixpacks.toml`** ?
-Railway's preferred configuration method using Nixpacks.
-
-**What it does:**
-- Specifies .NET SDK 10 as build dependency
-- Defines restore and publish commands
-- Sets up the start command
-- Configures ASPNETCORE_URLS for Railway's dynamic ports
-
-### 2. **`railway.json`** ?
-Alternative Railway configuration (JSON format).
-
-**What it does:**
-- Defines build and deploy commands
-- Configures restart policy
-- Provides explicit builder type (NIXPACKS)
-
-### 3. **`Dockerfile`** ? (Most Reliable)
+### 1. **`Dockerfile`** ? (Primary Build Method)
 Docker-based deployment configuration.
 
 **What it does:**
 - Multi-stage build (SDK for build, runtime for deployment)
+- Uses official Microsoft .NET 10 Docker images
 - Optimized image size
 - Explicit .NET 10 runtime
 - Port configuration (8080)
 
-**Why use Dockerfile?**
+**Why use Dockerfile:**
 - Most reliable for .NET 10 (newest version)
 - Railway has excellent Docker support
 - Explicit control over build process
-- Works even if Nixpacks doesn't support .NET 10 yet
+- Industry standard for containerized applications
 
-### 4. **`.dockerignore`** ?
+### 2. **`railway.json`** ?
+Railway project configuration.
+
+**What it does:**
+- Specifies Dockerfile as the builder
+- Defines build and deploy commands
+- Configures restart policy
+
+### 3. **`.dockerignore`** ?
 Optimizes Docker builds by excluding unnecessary files.
 
 ---
 
 ## ?? Deployment Steps
 
-### **Option 1: Automatic (Recommended)**
+### **Automatic Deployment (Recommended)**
 
-Railway will now automatically detect and use these configuration files:
+Railway will automatically detect and use the Dockerfile:
 
-1. **Commit and push the new files:**
+1. **Commit and push the configuration files:**
    ```bash
-   git add nixpacks.toml railway.json Dockerfile .dockerignore
-   git commit -m "Add Railway deployment configuration for .NET 10"
+   git add Dockerfile railway.json .dockerignore
+   git commit -m "Add Railway Docker deployment configuration for .NET 10"
    git push origin feature/sports-api
    ```
 
 2. **Railway will automatically:**
    - Detect the `Dockerfile` (first priority)
-   - Or use `nixpacks.toml` (if no Dockerfile)
-   - Build your application
+   - Build your application using Docker
    - Deploy to production
 
 3. **Monitor deployment:**
@@ -76,7 +67,7 @@ Railway will now automatically detect and use these configuration files:
 
 ---
 
-### **Option 2: Force Specific Build Method**
+### **Force Dockerfile Build (If Needed)**
 
 If Railway doesn't automatically use Dockerfile:
 
@@ -118,52 +109,32 @@ Deployment successful ?
 
 ## ?? Verify Configuration Files
 
-### **nixpacks.toml Check:**
-```toml
-[phases.setup]
-nixPkgs = ["dotnet-sdk_10"]  # Correct .NET version
-
-[phases.build]
-cmds = [
-    "dotnet restore PlayOhCanadaAPI/PlayOhCanadaAPI.csproj",  # Correct path
-    "dotnet publish PlayOhCanadaAPI/PlayOhCanadaAPI.csproj -c Release -o out"
-]
-
-[phases.start]
-cmd = "cd out && dotnet PlayOhCanadaAPI.dll"  # Correct DLL name
-```
-
 ### **Dockerfile Check:**
 ```dockerfile
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build  # .NET 10 SDK
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime  # .NET 10 Runtime
 ```
 
+**Verify the Dockerfile includes:**
+- ? Multi-stage build (build + runtime)
+- ? .NET 10 SDK and Runtime
+- ? Correct project paths
+- ? Port configuration (8080)
+- ? ASPNETCORE_URLS environment variable
+
 ---
 
 ## ?? Troubleshooting
 
-### **Issue 1: Build still fails**
-```
-Error: dotnet-sdk_10 not found in Nixpacks
-```
-
-**Solution:** Railway will use Dockerfile automatically since Nixpacks may not support .NET 10 yet.
-
-**Action:** No action needed - Dockerfile is the fallback.
-
----
-
-### **Issue 2: Port binding error**
+### **Issue 1: Port binding error**
 ```
 Error: Unable to bind to http://localhost:5000
 ```
 
 **Solution:** Railway uses dynamic ports via `$PORT` environment variable.
 
-**Fix:** Already configured in all config files:
-- Dockerfile: `ENV ASPNETCORE_URLS=http://+:8080`
-- nixpacks.toml: `ASPNETCORE_URLS = "http://0.0.0.0:$PORT"`
+**Fix:** Already configured in Dockerfile:
+- `ENV ASPNETCORE_URLS=http://+:8080`
 
 **Verify in Railway:**
 - Go to Variables tab
@@ -171,7 +142,7 @@ Error: Unable to bind to http://localhost:5000
 
 ---
 
-### **Issue 3: Wrong project path**
+### **Issue 2: Wrong project path**
 ```
 Error: Could not find project file
 ```
@@ -180,7 +151,6 @@ Error: Could not find project file
 ```
 PlayOHCanadaAPI/          # Root repo directory
 ??? Dockerfile             # ? At root
-??? nixpacks.toml          # ? At root
 ??? railway.json           # ? At root
 ??? PlayOhCanadaAPI/       # Project directory
     ??? PlayOhCanadaAPI.csproj
@@ -215,9 +185,9 @@ Start-Process "$baseUrl/scalar/v1"
 
 ## ?? Next Steps After Successful Deployment
 
-1. **Run Database Migrations** (see RAILWAY_DEPLOYMENT.md Step 5)
-2. **Test All Endpoints** (see RAILWAY_DEPLOYMENT.md Step 6)
-3. **Configure CI/CD** (see RAILWAY_DEPLOYMENT.md Day 2)
+1. **Run Database Migrations** (see RAILWAY_DEPLOYMENT_CHECKLIST.md Step 5)
+2. **Test All Endpoints** (see RAILWAY_DEPLOYMENT_CHECKLIST.md Step 6)
+3. **Configure CI/CD** (see PROGRESS.md Phase 2 Day 2)
 4. **Update Documentation** with production URLs
 
 ---
@@ -226,34 +196,11 @@ Start-Process "$baseUrl/scalar/v1"
 
 **Railway Documentation:**
 - [.NET Deployment Guide](https://docs.railway.app/guides/dotnet)
-- [Nixpacks .NET Support](https://nixpacks.com/docs/providers/csharp)
 - [Dockerfile Builds](https://docs.railway.app/deploy/builds#dockerfile)
 
 **Microsoft .NET 10 Documentation:**
 - [.NET 10 Docker Images](https://hub.docker.com/_/microsoft-dotnet)
 - [ASP.NET Core Deployment](https://learn.microsoft.com/aspnet/core/host-and-deploy/)
-
----
-
-## ?? Alternative: If Docker Doesn't Work
-
-If Docker builds are slow or fail, Railway offers **direct Nixpacks support**.
-
-**Wait for Nixpacks update:**
-Railway/Nixpacks may add .NET 10 support soon. Check:
-```bash
-# Check current Nixpacks .NET support
-npx nixpacks detect
-```
-
-**Temporary workaround:**
-Use .NET 8 temporarily (stable Nixpacks support):
-```toml
-[phases.setup]
-nixPkgs = ["dotnet-sdk_8"]  # Change from 10 to 8
-```
-
-Then update to .NET 10 when Nixpacks adds support.
 
 ---
 
@@ -283,7 +230,7 @@ info: Microsoft.Hosting.Lifetime[0]
 
 ## ?? Pro Tips
 
-1. **Use Dockerfile for .NET 10** - Most reliable until Nixpacks adds official support
+1. **Use Dockerfile for .NET 10** - Most reliable and industry standard
 2. **Monitor build time** - First build: 5-10 min, Subsequent: 2-3 min (cached)
 3. **Check Railway status** - https://status.railway.app if builds fail
 4. **Use Railway CLI** - For faster iteration during setup
@@ -313,4 +260,4 @@ railway logs  # View real-time logs
 ---
 
 **Last Updated:** Phase 2 - Railway Deployment Configuration  
-**Status:** ? Ready to deploy
+**Status:** ? Ready to deploy using Docker

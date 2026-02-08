@@ -8,18 +8,18 @@ Railway showed this error:
 ? Railpack could not determine how to build the app.
 ```
 
-**Cause:** Railway's automatic detection (Railpack/Nixpacks) couldn't identify how to build a .NET 10 application because:
+**Cause:** Railway's automatic detection couldn't identify how to build a .NET 10 application because:
 - .NET 10 is very new (released late 2024)
-- Nixpacks may not have .NET 10 detection yet
 - No explicit build configuration was provided
+- Railway needed explicit Docker configuration
 
 ---
 
 ## ? **What Was Fixed?**
 
-Created **4 configuration files** to explicitly tell Railway how to build your .NET 10 API:
+Created **3 configuration files** to explicitly tell Railway how to build your .NET 10 API using Docker:
 
-### **1. Dockerfile** (Primary solution)
+### **1. Dockerfile** (Primary and only build method)
 - **Why:** Most reliable for .NET 10 deployment
 - **What it does:**
   - Uses official Microsoft .NET 10 Docker images
@@ -27,21 +27,14 @@ Created **4 configuration files** to explicitly tell Railway how to build your .
   - Configures correct ports for Railway
   - Optimizes image size
 
-### **2. nixpacks.toml** (Alternative)
-- **Why:** Railway's native build system
-- **What it does:**
-  - Specifies .NET SDK 10 as dependency
-  - Defines restore, build, publish steps
-  - Configures start command
-
-### **3. railway.json** (Backup)
+### **2. railway.json** (Configuration)
 - **Why:** Railway-specific configuration
 - **What it does:**
+  - Specifies DOCKERFILE as builder
   - Defines build commands
   - Sets restart policy
-  - Specifies builder type
 
-### **4. .dockerignore** (Optimization)
+### **3. .dockerignore** (Optimization)
 - **Why:** Speeds up Docker builds
 - **What it does:**
   - Excludes unnecessary files from Docker context
@@ -52,12 +45,10 @@ Created **4 configuration files** to explicitly tell Railway how to build your .
 
 ## ?? **How Railway Will Build Now**
 
-Railway's build priority:
+Railway uses Docker exclusively:
 
-1. **Dockerfile** ? Will use this (most reliable)
-2. nixpacks.toml (if no Dockerfile)
-3. railway.json (if no Dockerfile/nixpacks)
-4. Auto-detection (failed before)
+1. **Dockerfile** ? Railway uses this for all builds
+2. Auto-detection (disabled - explicit config required)
 
 **Build Process:**
 ```
@@ -84,15 +75,14 @@ Step 5: Start application (dotnet PlayOhCanadaAPI.dll)
 | File | Size | Purpose | Status |
 |------|------|---------|--------|
 | `Dockerfile` | ~1 KB | Docker build instructions | ? Ready |
-| `nixpacks.toml` | ~500 B | Nixpacks configuration | ? Ready |
 | `railway.json` | ~300 B | Railway settings | ? Ready |
 | `.dockerignore` | ~1 KB | Build optimization | ? Ready |
-| `RAILWAY_BUILD_FIX.md` | ~8 KB | Detailed documentation | ? Ready |
+| `RAILWAY_BUILD_FIX.md` | ~6 KB | Detailed documentation | ? Ready |
 | `RAILWAY_QUICKSTART.md` | ~5 KB | Quick reference | ? Ready |
 | `railway-fix-deploy.ps1` | ~3 KB | Automated deployment script | ? Ready |
 | `verify-railway-config.ps1` | ~4 KB | Configuration verification | ? Ready |
 
-**Total:** 8 files created to fix Railway deployment
+**Total:** 7 files created to fix Railway deployment
 
 ---
 
@@ -102,7 +92,7 @@ Step 5: Start application (dotnet PlayOhCanadaAPI.dll)
 # Build Stage - Uses full .NET 10 SDK (larger but has build tools)
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-COPY PlayOhCanadaAPI/PlayOhCanadaAPI.csproj PlayOhCanadaAPI/
+COPY PlayOhCanadaAPI/*.csproj PlayOhCanadaAPI/
 RUN dotnet restore PlayOhCanadaAPI/PlayOhCanadaAPI.csproj
 COPY PlayOhCanadaAPI/ PlayOhCanadaAPI/
 WORKDIR /src/PlayOhCanadaAPI
@@ -153,8 +143,8 @@ ENTRYPOINT ["dotnet", "PlayOhCanadaAPI.dll"]
 
 **Option B: Manual**
 ```bash
-git add Dockerfile nixpacks.toml railway.json .dockerignore
-git commit -m "Add Railway deployment configuration for .NET 10"
+git add Dockerfile railway.json .dockerignore
+git commit -m "Add Railway Docker deployment configuration for .NET 10"
 git push origin feature/sports-api
 ```
 
@@ -204,7 +194,7 @@ Start-Process "$baseUrl/scalar/v1"
 
 ### **2. Docker is Universal**
 - Railway has excellent Docker support
-- Works regardless of Nixpacks .NET 10 support
+- Industry standard for containerized applications
 - Standard across all cloud platforms
 
 ### **3. Multi-Stage Build**
@@ -225,7 +215,7 @@ Start-Process "$baseUrl/scalar/v1"
 ```
 Railway: "I don't know how to build this"
 Railpack: "Looking for start.sh... not found"
-Nixpacks: "Detecting project type... unknown"
+Auto-detection: "Detecting project type... unknown"
 Result: ? Build failed
 ```
 
@@ -251,7 +241,7 @@ Result: ? Build successful
 **Solution:** Dockerfile already configures `ASPNETCORE_URLS=http://+:8080`
 
 ### **Issue: Build succeeds but app crashes**
-**Solution:** Check Railway environment variables (Step 3 from previous guide)
+**Solution:** Check Railway environment variables (see RAILWAY_DEPLOYMENT_CHECKLIST.md)
 
 ### **Issue: Very slow builds**
 **Solution:** `.dockerignore` is configured to exclude unnecessary files
@@ -309,15 +299,15 @@ Continue with **PROGRESS.md ? Phase 2**:
 
 ## ?? **Key Takeaways**
 
-1. **Dockerfile is most reliable** for new .NET versions
-2. **Railway prioritizes Dockerfile** over auto-detection
+1. **Dockerfile is the standard** for .NET deployment
+2. **Railway uses Docker** as the primary build method
 3. **Multi-stage builds** optimize image size
-4. **Explicit configuration** beats auto-detection
+4. **Explicit configuration** ensures reliable builds
 5. **Documentation helps** future deployments
 
 ---
 
 **Status:** ? Railway deployment configuration complete  
-**Build Method:** Docker (most reliable)  
+**Build Method:** Docker (industry standard)  
 **Ready for:** Production deployment  
 **Next:** Database migration & testing

@@ -6,7 +6,7 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Copy project file and restore dependencies
-COPY PlayOhCanadaAPI/PlayOhCanadaAPI.csproj PlayOhCanadaAPI/
+COPY PlayOhCanadaAPI/*.csproj PlayOhCanadaAPI/
 RUN dotnet restore PlayOhCanadaAPI/PlayOhCanadaAPI.csproj
 
 # Copy everything else and build

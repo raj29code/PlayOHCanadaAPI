@@ -1,0 +1,17 @@
+# Railway Nixpacks Configuration for .NET 10
+# This file tells Railway how to build and run the Play Oh Canada API
+
+[phases.setup]
+nixPkgs = ["dotnet-sdk_10"]
+
+[phases.build]
+cmds = [
+    "dotnet restore PlayOhCanadaAPI/PlayOhCanadaAPI.csproj",
+    "dotnet publish PlayOhCanadaAPI/PlayOhCanadaAPI.csproj -c Release -o out"
+]
+
+[phases.start]
+cmd = "cd out && dotnet PlayOhCanadaAPI.dll"
+
+[variables]
+ASPNETCORE_URLS = "http://0.0.0.0:$PORT"

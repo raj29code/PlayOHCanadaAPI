@@ -603,7 +603,335 @@ Schedule (1) ???? (N) Booking
 
 ---
 
-## ?? Next Phase: Phase 2 (Not Started)
+## ?? Next Phase: Phase 2 - Deployment & Production Setup
+
+### Current Plan: Railway Deployment with CI/CD
+
+**Status:** ?? Ready to Start (Tomorrow)  
+**Timeline:** 1-2 days for initial deployment  
+**Cost:** ~$10-15 CAD/month (includes PostgreSQL)  
+
+---
+
+### Step 1: Railway Setup & Deployment (Day 1)
+
+#### 1.1 Railway Account & Project Setup (15 min)
+- [ ] Sign up at https://railway.app
+- [ ] Connect GitHub account
+- [ ] Create new project from repository
+- [ ] Select PlayOHCanadaAPI repository
+
+#### 1.2 PostgreSQL Database Setup (5 min)
+- [ ] Add PostgreSQL service to project
+- [ ] Note down database credentials
+- [ ] Configure connection pooling
+- [ ] Enable auto-backups
+
+#### 1.3 Environment Variables Configuration (20 min)
+- [ ] Set `JWT_SECRET` (min 32 chars)
+- [ ] Set `DATABASE_URL` from PostgreSQL service
+- [ ] Set `ASPNETCORE_ENVIRONMENT=Production`
+- [ ] Configure CORS origins (frontend URL)
+- [ ] Set `ScheduleCleanup__RetentionDays=7`
+- [ ] Set `ScheduleCleanup__CleanupIntervalHours=24`
+
+**Railway Environment Variables:**
+```bash
+JWT_SECRET=<generate-32-char-secret>
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+ASPNETCORE_ENVIRONMENT=Production
+CORS__AllowedOrigins=https://your-frontend.com
+ScheduleCleanup__RetentionDays=7
+ScheduleCleanup__CleanupIntervalHours=24
+```
+
+#### 1.4 Initial Deployment (30 min)
+- [ ] Railway auto-detects .NET project
+- [ ] Configure build settings if needed
+- [ ] Deploy application
+- [ ] Verify deployment status
+- [ ] Check application logs
+
+#### 1.5 Database Migration (15 min)
+- [ ] Connect to Railway PostgreSQL
+- [ ] Run `dotnet ef database update` remotely
+- [ ] Verify tables created
+- [ ] Seed initial data (sports)
+
+#### 1.6 Testing & Verification (30 min)
+- [ ] Test health endpoint
+- [ ] Test authentication endpoints
+- [ ] Test sports endpoints
+- [ ] Test schedules endpoints
+- [ ] Verify Scalar UI accessible
+- [ ] Check logs for errors
+
+**Total Day 1 Time:** ~2 hours
+
+---
+
+### Step 2: CI/CD Pipeline Setup (Day 2)
+
+#### 2.1 GitHub Actions Configuration (30 min)
+- [ ] Create `.github/workflows/railway-deploy.yml`
+- [ ] Configure automatic deployment on push to main
+- [ ] Set up environment secrets
+- [ ] Test deployment pipeline
+
+**Example GitHub Action:**
+```yaml
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Run tests
+        run: dotnet test
+      
+      - name: Deploy to Railway
+        uses: railwayapp/railway-deploy@v1
+        with:
+          railway-token: ${{ secrets.RAILWAY_TOKEN }}
+```
+
+#### 2.2 Deployment Monitoring (20 min)
+- [ ] Configure Railway webhooks
+- [ ] Set up deployment notifications
+- [ ] Configure error tracking
+- [ ] Set up uptime monitoring
+
+#### 2.3 Custom Domain Setup (Optional - 30 min)
+- [ ] Purchase domain (if needed)
+- [ ] Configure DNS settings
+- [ ] Add custom domain in Railway
+- [ ] Verify SSL certificate
+
+**Total Day 2 Time:** ~1.5 hours
+
+---
+
+### Step 3: Production Verification & Documentation
+
+#### 3.1 Smoke Testing
+- [ ] Register test user
+- [ ] Create test sport
+- [ ] Create test schedule
+- [ ] Join test schedule
+- [ ] Test logout functionality
+- [ ] Verify cleanup service running
+
+#### 3.2 Performance Testing
+- [ ] Test API response times
+- [ ] Verify database queries optimized
+- [ ] Check memory usage
+- [ ] Monitor concurrent requests
+
+#### 3.3 Documentation Updates
+- [ ] Document production API URL
+- [ ] Update README with deployment info
+- [ ] Create DEPLOYMENT.md guide
+- [ ] Document environment variables
+- [ ] Create troubleshooting guide
+
+---
+
+### Step 4: Migration Path to Azure (Future)
+
+#### When to Migrate to Azure:
+- Usage exceeds 100 concurrent users
+- Need for Azure-specific services (Azure AD, etc.)
+- Require 99.95% SLA
+- Need for Canadian data residency compliance
+- Budget allows $25+ CAD/month
+
+#### Migration Steps (When Ready):
+1. Create Azure App Service B1
+2. Create Azure PostgreSQL Flexible B1ms
+3. Export Railway database
+4. Import to Azure PostgreSQL
+5. Update connection strings
+6. Deploy to Azure App Service
+7. Update DNS/custom domain
+8. Monitor for issues
+9. Decommission Railway
+
+**Migration Effort:** ~4-6 hours  
+**Downtime:** <10 minutes (with proper planning)
+
+---
+
+### Railway vs Azure Comparison
+
+| Aspect | Railway (Now) | Azure (Future) |
+|--------|---------------|----------------|
+| **Cost** | $10-15/month | $25/month |
+| **Setup Time** | 5 minutes | 20 minutes |
+| **PostgreSQL** | Included | Separate service |
+| **Auto-deploy** | Built-in | GitHub Actions |
+| **Scaling** | Automatic | Manual config |
+| **SLA** | 99.9% | 99.95% |
+| **Data Center** | US/EU | Canada |
+| **Best For** | Testing/MVP | Production/Scale |
+
+---
+
+### Implementation Checklist
+
+#### Pre-Deployment
+- [x] Phase 1 complete ?
+- [x] All features tested locally ?
+- [x] Documentation complete ?
+- [ ] Railway account created
+- [ ] GitHub repository ready
+
+#### Day 1: Railway Deployment
+- [ ] Sign up for Railway
+- [ ] Connect GitHub account
+- [ ] Create new project
+- [ ] Add PostgreSQL service
+- [ ] Configure environment variables
+- [ ] Deploy application
+- [ ] Run database migrations
+- [ ] Verify all endpoints working
+- [ ] Test authentication flow
+- [ ] Test schedule creation/booking
+
+#### Day 2: CI/CD Setup
+- [ ] Create GitHub Actions workflow
+- [ ] Configure automatic deployments
+- [ ] Test CI/CD pipeline
+- [ ] Set up monitoring
+- [ ] Configure custom domain (optional)
+
+#### Post-Deployment
+- [ ] Update documentation with production URLs
+- [ ] Create DEPLOYMENT.md guide
+- [ ] Set up error monitoring
+- [ ] Configure uptime monitoring
+- [ ] Plan monitoring schedule
+
+---
+
+### Success Criteria
+
+#### Must Have (Before Launch)
+? API deployed and accessible  
+? Database migrations completed  
+? All endpoints functional  
+? Authentication working  
+? SSL/HTTPS enabled  
+? Environment variables configured  
+? Logs accessible  
+
+#### Should Have
+? CI/CD pipeline working  
+? Custom domain configured  
+? Error monitoring setup  
+? Uptime monitoring active  
+? Documentation updated  
+
+#### Nice to Have
+- Performance monitoring dashboard
+- Automated backups verified
+- Load testing completed
+- Disaster recovery plan documented
+
+---
+
+### Resources & Links
+
+**Railway:**
+- Dashboard: https://railway.app/dashboard
+- Documentation: https://docs.railway.app
+- PostgreSQL Guide: https://docs.railway.app/databases/postgresql
+
+**Deployment Guides:**
+- Will create: `DEPLOYMENT.md` - Complete deployment guide
+- Will create: `RAILWAY_SETUP.md` - Railway-specific setup
+- Will create: `CI_CD_SETUP.md` - GitHub Actions configuration
+
+**Monitoring:**
+- Railway Logs: Built-in
+- Uptime Monitor: Will configure
+- Error Tracking: Will configure
+
+---
+
+### Cost Tracking
+
+**Railway (Current Plan):**
+```
+Estimated Monthly Cost: $10-15 CAD
+- Compute: $5-8/month (usage-based)
+- PostgreSQL: Included
+- Bandwidth: Included
+- SSL: Included
+```
+
+**Azure (Migration Target):**
+```
+Estimated Monthly Cost: $25 CAD
+- App Service B1: $13/month
+- PostgreSQL Flexible B1ms: $12/month
+- Bandwidth: Included
+- SSL: Included
+```
+
+---
+
+### Timeline Summary
+
+**Tomorrow (Day 1):**
+- Railway setup & initial deployment (2 hours)
+- Database migration & testing (1 hour)
+
+**Day 2:**
+- CI/CD pipeline setup (1.5 hours)
+- Monitoring & documentation (1 hour)
+
+**Total Implementation:** 2 days (~5-6 hours work)
+
+---
+
+### Next Steps After Deployment
+
+1. **Monitor Performance**
+   - Track API response times
+   - Monitor database queries
+   - Watch error rates
+
+2. **Gather Metrics**
+   - User registrations
+   - Schedule creations
+   - Bookings made
+   - API usage patterns
+
+3. **Plan Phase 2 Features**
+   - SSO integration
+   - Email verification
+   - Enhanced notifications
+   - User profiles
+
+4. **Evaluate Azure Migration**
+   - Monitor usage growth
+   - Assess scalability needs
+   - Review cost vs. features
+
+---
+
+## ?? Next Phase: Phase 3 (After Deployment)
 
 ### Planned Features
 
@@ -636,164 +964,3 @@ Schedule (1) ???? (N) Booking
 - Schedule recommendations
 - Booking history
 - Ratings and reviews
-
----
-
-## ?? Learning Resources
-
-### Documentation Index
-
-**Start Here:**
-1. `README.md` - Main guide
-2. `SETUP_CHECKLIST.md` - Quick setup
-
-**Core Features:**
-3. `README_AUTH.md` - Authentication
-4. `SPORTS_SCHEDULING_QUICKSTART.md` - Sports/schedules
-
-**Advanced:**
-5. `RECURRING_SCHEDULE_GUIDE.md` - Recurring patterns
-6. `TIMEZONE_HANDLING_GUIDE.md` - Timezone support
-7. `REFINED_SCHEDULE_API_GUIDE.md` - Date/time API
-
-**Reference:**
-8. `*_QUICKREF.md` files - Quick references
-9. `*_IMPLEMENTATION.md` files - Technical details
-
----
-
-## ?? Maintenance
-
-### Regular Tasks
-
-**Daily:**
-- ? Automatic schedule cleanup (handled by service)
-- ? Automatic token cleanup (handled by service)
-
-**Weekly:**
-- Review logs for errors
-- Check database size
-- Monitor API performance
-
-**Monthly:**
-- Update dependencies
-- Review security advisories
-- Backup database
-
----
-
-## ?? Metrics
-
-### Code Statistics
-
-**Total Files:** 50+ code files  
-**Total Lines of Code:** ~5,000+ (estimated)  
-**Documentation:** 27 comprehensive guides  
-**Test Scripts:** 5 PowerShell scripts  
-**Database Tables:** 5 tables  
-**API Endpoints:** 15 endpoints  
-**Migrations:** 3 migrations  
-
-### Feature Breakdown
-
-- **Authentication:** ~25% of codebase
-- **Schedules:** ~35% of codebase
-- **Sports:** ~10% of codebase
-- **Bookings:** ~15% of codebase
-- **Infrastructure:** ~15% of codebase
-
----
-
-## ?? Achievements
-
-### What's Been Accomplished
-
-? **Production-Ready API** - Complete Phase 1 implementation  
-? **Comprehensive Documentation** - 27 detailed guides  
-? **Timezone Support** - Global user support  
-? **Flexible Scheduling** - Real-world recurrence patterns  
-? **Secure Authentication** - Industry-standard JWT  
-? **Automatic Maintenance** - Background cleanup service  
-? **Developer Experience** - Interactive API docs  
-? **Testing Suite** - 5 comprehensive test scripts  
-
----
-
-## ?? Future Considerations
-
-### Technical Debt
-
-**TODO Items:**
-1. Migrate cleanup service to Azure Functions/Lambda (documented)
-2. Add notification system for schedule changes
-3. Implement email verification
-4. Add refresh token support
-5. Implement rate limiting
-6. Add caching layer (Redis)
-
-### Scalability
-
-**Current Capacity:**
-- Suitable for small to medium applications
-- < 10,000 schedules per day
-- < 1,000 concurrent users
-
-**Scaling Strategy:**
-- Migrate cleanup to serverless
-- Add read replicas for database
-- Implement caching
-- Add load balancer
-- Container orchestration (Kubernetes)
-
----
-
-## ?? Support
-
-### Resources
-
-**Documentation:** 27 comprehensive guides  
-**Repository:** https://github.com/raj29code/PlayOHCanadaAPI  
-**Interactive API:** Scalar UI at `https://localhost:7063/scalar/v1`  
-
-### Common Issues
-
-**Issue:** JWT secret key too short  
-**Solution:** See `JWT_SECRETKEY_VALIDATION.md`
-
-**Issue:** Timezone mismatch  
-**Solution:** See `TIMEZONE_HANDLING_GUIDE.md`
-
-**Issue:** Recurring schedules not working  
-**Solution:** See `RECURRING_SCHEDULE_GUIDE.md`
-
----
-
-## ? Summary
-
-### Phase 1: Complete ?
-
-**Status:** Production-ready API with comprehensive features  
-**Quality:** Well-documented, tested, secure  
-**Architecture:** Clean, maintainable, scalable  
-**Documentation:** 27 comprehensive guides  
-**Testing:** 5 test scripts covering all features  
-
-### Ready For:
-- ? Development deployment
-- ? Staging deployment
-- ? Production deployment (with proper secrets management)
-- ? Frontend integration
-- ? Mobile app integration
-
-### Next Steps:
-1. Deploy to production environment
-2. Set up CI/CD pipeline
-3. Configure monitoring and alerts
-4. Plan Phase 2 features
-5. Gather user feedback
-
----
-
-**Last Updated:** January 29, 2025  
-**Version:** 1.0.0 (Phase 1 Complete)  
-**Next Review:** After Phase 2 planning

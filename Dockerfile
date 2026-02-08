@@ -20,9 +20,9 @@ WORKDIR /app
 # Copy published app from build stage
 COPY --from=build /app/publish .
 
-# Expose port (Railway will set the PORT environment variable)
-EXPOSE 8080
-ENV ASPNETCORE_URLS=http://+:8080
+# Railway provides PORT environment variable, default to 8080
+ENV ASPNETCORE_URLS=http://0.0.0.0:${PORT:-8080}
+EXPOSE ${PORT:-8080}
 
 # Start the application
 ENTRYPOINT ["dotnet", "PlayOhCanadaAPI.dll"]

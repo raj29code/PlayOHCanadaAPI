@@ -89,14 +89,15 @@ The Schedule API has been enhanced to support comprehensive recurring schedule p
 {
   "sportId": 1,
   "venue": "Central Park Tennis Court",
-  "startTime": "2026-01-01T19:00:00Z",
-  "endTime": "2026-01-01T22:00:00Z",
+  "startDate": "2026-01-01",
+  "startTime": "19:00:00",
+  "endTime": "22:00:00",
   "maxPlayers": 8,
   "equipmentDetails": "Bring your own racket",
   "recurrence": {
     "isRecurring": true,
     "frequency": 2,
-    "endDate": "2026-02-01T23:59:59Z",
+    "endDate": "2026-02-01",
     "daysOfWeek": [4]
   }
 }
@@ -111,14 +112,15 @@ The Schedule API has been enhanced to support comprehensive recurring schedule p
 {
   "sportId": 4,
   "venue": "City Park Field",
-  "startTime": "2026-01-03T09:00:00Z",
-  "endTime": "2026-01-03T11:00:00Z",
+  "startDate": "2026-01-03",
+  "startTime": "09:00:00",
+  "endTime": "11:00:00",
   "maxPlayers": 22,
   "recurrence": {
     "isRecurring": true,
     "frequency": 2,
     "daysOfWeek": [0, 6],
-    "endDate": "2026-03-31T23:59:59Z"
+    "endDate": "2026-03-31"
   }
 }
 ```
@@ -132,14 +134,15 @@ The Schedule API has been enhanced to support comprehensive recurring schedule p
 {
   "sportId": 5,
   "venue": "Wellness Studio",
-  "startTime": "2026-01-05T06:00:00Z",
-  "endTime": "2026-01-05T07:00:00Z",
+  "startDate": "2026-01-05",
+  "startTime": "06:00:00",
+  "endTime": "07:00:00",
   "maxPlayers": 20,
   "recurrence": {
     "isRecurring": true,
     "frequency": 2,
     "daysOfWeek": [1, 2, 3, 4, 5],
-    "endDate": "2026-01-31T23:59:59Z"
+    "endDate": "2026-01-31"
   }
 }
 ```
@@ -285,7 +288,7 @@ dotnet run --project PlayOhCanadaAPI
   "recurrence": {
     "isRecurring": true,
     "frequency": 2,
-    "endDate": "2026-02-01T23:59:59Z",
+    "endDate": "2026-02-01",
     "daysOfWeek": [4],          // NEW - Specific days
     "intervalCount": 1           // NEW - Future use
   }
@@ -327,13 +330,14 @@ curl -X POST http://localhost:5000/api/schedules \
   -d '{
     "sportId": 1,
     "venue": "Tennis Court",
-    "startTime": "2026-01-01T19:00:00Z",
-    "endTime": "2026-01-01T22:00:00Z",
+    "startDate": "2026-01-01",
+    "startTime": "19:00:00",
+    "endTime": "22:00:00",
     "maxPlayers": 8,
     "recurrence": {
       "isRecurring": true,
       "frequency": 2,
-      "endDate": "2026-02-01T23:59:59Z",
+      "endDate": "2026-02-01",
       "daysOfWeek": [4]
     }
   }'

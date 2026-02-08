@@ -26,8 +26,8 @@ public class ScheduleCleanupService : BackgroundService
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<ScheduleCleanupService> _logger;
     private readonly IConfiguration _configuration;
-    private TimeSpan _cleanupInterval;
-    private int _retentionDays;
+    private readonly TimeSpan _cleanupInterval;
+    private readonly int _retentionDays;
 
     public ScheduleCleanupService(
         IServiceProvider serviceProvider,

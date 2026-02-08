@@ -236,7 +236,7 @@ public class BookingsController : ControllerBase
         _context.Bookings.Remove(booking);
         await _context.SaveChangesAsync();
 
-        return Ok(new { message = "Booking cancelled successfully" });
+        return NoContent();
     }
 
     /// <summary>

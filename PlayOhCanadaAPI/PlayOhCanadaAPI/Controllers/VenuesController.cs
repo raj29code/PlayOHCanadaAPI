@@ -52,12 +52,8 @@ public class VenuesController : ControllerBase
     {
         var now = DateTime.UtcNow;
         
-        var schedules = await _context.Schedules
-            .Include(s => s.Bookings)
-            .Include(s => s.Sport)
-            .ToListAsync();
-
-        var statistics = schedules
+        // Perform aggregation in the database for better performance
+        var statistics = await _context.Schedules
             .GroupBy(s => s.Venue)
             .Select(g => new VenueStatisticsDto
             {
@@ -76,7 +72,7 @@ public class VenuesController : ControllerBase
                 AverageBookingsPerSchedule = g.Average(s => s.Bookings.Count)
             })
             .OrderBy(v => v.VenueName)
-            .ToList();
+            .ToListAsync();
 
         return Ok(statistics);
     }

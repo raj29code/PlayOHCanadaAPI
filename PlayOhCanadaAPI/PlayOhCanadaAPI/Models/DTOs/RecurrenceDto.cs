@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace PlayOhCanadaAPI.Models.DTOs;
 
 public class RecurrenceDto
@@ -10,6 +12,7 @@ public class RecurrenceDto
     /// <summary>
     /// Frequency of recurrence (Daily, Weekly, etc.)
     /// </summary>
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public RecurrenceFrequency? Frequency { get; set; }
     
     /// <summary>

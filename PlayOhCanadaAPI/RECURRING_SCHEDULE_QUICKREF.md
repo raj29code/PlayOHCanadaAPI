@@ -11,14 +11,15 @@ Authorization: Bearer YOUR_ADMIN_TOKEN
 {
   "sportId": 1,
   "venue": "Central Park Tennis Court",
-  "startTime": "2026-01-01T19:00:00Z",
-  "endTime": "2026-01-01T22:00:00Z",
+  "startDate": "2026-01-01",
+  "startTime": "19:00:00",
+  "endTime": "22:00:00",
   "maxPlayers": 8,
   "equipmentDetails": "Bring your own racket",
   "recurrence": {
     "isRecurring": true,
     "frequency": 2,
-    "endDate": "2026-02-01T23:59:59Z",
+    "endDate": "2026-02-01",
     "daysOfWeek": [4]
   }
 }
@@ -43,7 +44,7 @@ Creates schedules for:
     "isRecurring": true,
     "frequency": 2,
     "daysOfWeek": [1, 3, 5],
-    "endDate": "2026-12-31T23:59:59Z"
+    "endDate": "2026-12-31"
   }
 }
 ```
@@ -56,7 +57,7 @@ Creates schedules for:
     "isRecurring": true,
     "frequency": 2,
     "daysOfWeek": [0, 6],
-    "endDate": "2026-12-31T23:59:59Z"
+    "endDate": "2026-12-31"
   }
 }
 ```
@@ -68,7 +69,7 @@ Creates schedules for:
   "recurrence": {
     "isRecurring": true,
     "frequency": 1,
-    "endDate": "2026-01-07T23:59:59Z"
+    "endDate": "2026-01-07"
   }
 }
 ```
@@ -80,7 +81,7 @@ Creates schedules for:
   "recurrence": {
     "isRecurring": true,
     "frequency": 4,
-    "endDate": "2026-12-31T23:59:59Z"
+    "endDate": "2026-12-31"
   }
 }
 ```
@@ -93,7 +94,7 @@ Creates schedules for:
     "isRecurring": true,
     "frequency": 3,
     "daysOfWeek": [4],
-    "endDate": "2026-12-31T23:59:59Z"
+    "endDate": "2026-12-31"
   }
 }
 ```
@@ -142,18 +143,19 @@ $headers = @{
 $body = @{
     sportId = 1
     venue = "Tennis Court"
-    startTime = "2026-01-01T19:00:00Z"
-    endTime = "2026-01-01T22:00:00Z"
+    startDate = "2026-01-01"
+    startTime = "19:00:00"
+    endTime = "22:00:00"
     maxPlayers = 8
     recurrence = @{
         isRecurring = $true
         frequency = 2
         daysOfWeek = @(4)
-        endDate = "2026-02-01T23:59:59Z"
+        endDate = "2026-02-01"
     }
 } | ConvertTo-Json -Depth 10
 
-Invoke-RestMethod -Uri "http://localhost:5000/api/schedules" `
+Invoke-RestMethod -Uri "https://localhost:7063/api/schedules" `
     -Method Post -Headers $headers -Body $body
 ```
 

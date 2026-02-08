@@ -1,5 +1,5 @@
 # Test script for Recurring Schedule Feature
-$baseUrl = "http://localhost:5000/api"
+$baseUrl = "https://localhost:7063/api"
 
 Write-Host "=== Testing Recurring Schedule Feature ===" -ForegroundColor Cyan
 Write-Host ""
@@ -43,14 +43,15 @@ Write-Host "Test 1: Creating Weekly Schedule (Every Thursday 7-10 PM)" -Foregrou
 $weeklySchedule = @{
     sportId = $sportId
     venue = "Tennis Court A"
-    startTime = "2026-01-01T19:00:00Z"
-    endTime = "2026-01-01T22:00:00Z"
+    startDate = "2026-01-01"
+    startTime = "19:00:00"
+    endTime = "22:00:00"
     maxPlayers = 8
     equipmentDetails = "Bring your own racket"
     recurrence = @{
         isRecurring = $true
         frequency = 2  # Weekly
-        endDate = "2026-02-01T23:59:59Z"
+        endDate = "2026-02-01"
         daysOfWeek = @(4)  # Thursday
     }
 } | ConvertTo-Json -Depth 10
@@ -72,14 +73,15 @@ Write-Host "Test 2: Creating Daily Schedule (Every day for a week)" -ForegroundC
 $dailySchedule = @{
     sportId = $sportId
     venue = "Morning Yoga Studio"
-    startTime = "2026-03-01T06:00:00Z"
-    endTime = "2026-03-01T07:00:00Z"
+    startDate = "2026-03-01"
+    startTime = "06:00:00"
+    endTime = "07:00:00"
     maxPlayers = 20
     equipmentDetails = "Bring your mat"
     recurrence = @{
         isRecurring = $true
         frequency = 1  # Daily
-        endDate = "2026-03-07T23:59:59Z"
+        endDate = "2026-03-07"
     }
 } | ConvertTo-Json -Depth 10
 
@@ -100,14 +102,15 @@ Write-Host "Test 3: Creating Weekend Schedule (Sat & Sun for 2 weeks)" -Foregrou
 $weekendSchedule = @{
     sportId = $sportId
     venue = "Soccer Field"
-    startTime = "2026-04-05T10:00:00Z"
-    endTime = "2026-04-05T12:00:00Z"
+    startDate = "2026-04-05"
+    startTime = "10:00:00"
+    endTime = "12:00:00"
     maxPlayers = 22
     equipmentDetails = "Shin guards required"
     recurrence = @{
         isRecurring = $true
         frequency = 2  # Weekly
-        endDate = "2026-04-20T23:59:59Z"
+        endDate = "2026-04-20"
         daysOfWeek = @(0, 6)  # Sunday and Saturday
     }
 } | ConvertTo-Json -Depth 10
@@ -131,14 +134,15 @@ Write-Host "Test 4: Creating Weekday Schedule (Mon-Fri for 1 week)" -ForegroundC
 $weekdaySchedule = @{
     sportId = $sportId
     venue = "Basketball Court"
-    startTime = "2026-05-04T18:00:00Z"
-    endTime = "2026-05-04T20:00:00Z"
+    startDate = "2026-05-04"
+    startTime = "18:00:00"
+    endTime = "20:00:00"
     maxPlayers = 10
     equipmentDetails = "Indoor shoes required"
     recurrence = @{
         isRecurring = $true
         frequency = 2  # Weekly
-        endDate = "2026-05-10T23:59:59Z"
+        endDate = "2026-05-10"
         daysOfWeek = @(1, 2, 3, 4, 5)  # Mon through Fri
     }
 } | ConvertTo-Json -Depth 10
@@ -162,14 +166,15 @@ Write-Host "Test 5: Creating BiWeekly Schedule (Every other Wednesday)" -Foregro
 $biweeklySchedule = @{
     sportId = $sportId
     venue = "Badminton Hall"
-    startTime = "2026-06-03T19:00:00Z"
-    endTime = "2026-06-03T21:00:00Z"
+    startDate = "2026-06-03"
+    startTime = "19:00:00"
+    endTime = "21:00:00"
     maxPlayers = 8
     equipmentDetails = "Rackets provided"
     recurrence = @{
         isRecurring = $true
         frequency = 3  # BiWeekly
-        endDate = "2026-07-31T23:59:59Z"
+        endDate = "2026-07-31"
         daysOfWeek = @(3)  # Wednesday
     }
 } | ConvertTo-Json -Depth 10
@@ -192,14 +197,15 @@ Write-Host "Test 6: Creating Monthly Schedule (15th of each month)" -ForegroundC
 $monthlySchedule = @{
     sportId = $sportId
     venue = "Volleyball Court"
-    startTime = "2026-01-15T18:00:00Z"
-    endTime = "2026-01-15T20:00:00Z"
+    startDate = "2026-01-15"
+    startTime = "18:00:00"
+    endTime = "20:00:00"
     maxPlayers = 12
     equipmentDetails = "Monthly tournament"
     recurrence = @{
         isRecurring = $true
         frequency = 4  # Monthly
-        endDate = "2026-06-30T23:59:59Z"
+        endDate = "2026-06-30"
     }
 } | ConvertTo-Json -Depth 10
 
@@ -221,8 +227,9 @@ Write-Host "Test 7: Creating Single Schedule (One-time event)" -ForegroundColor 
 $singleSchedule = @{
     sportId = $sportId
     venue = "Special Event Arena"
-    startTime = "2026-12-25T14:00:00Z"
-    endTime = "2026-12-25T18:00:00Z"
+    startDate = "2026-12-25"
+    startTime = "14:00:00"
+    endTime = "18:00:00"
     maxPlayers = 50
     equipmentDetails = "Holiday special event"
 } | ConvertTo-Json -Depth 10
@@ -243,13 +250,14 @@ Write-Host "Test 8: Testing Validation (Weekly without DaysOfWeek)" -ForegroundC
 $invalidSchedule = @{
     sportId = $sportId
     venue = "Test Venue"
-    startTime = "2026-01-01T12:00:00Z"
-    endTime = "2026-01-01T13:00:00Z"
+    startDate = "2026-01-01"
+    startTime = "12:00:00"
+    endTime = "13:00:00"
     maxPlayers = 10
     recurrence = @{
         isRecurring = $true
         frequency = 2  # Weekly
-        endDate = "2026-01-31T23:59:59Z"
+        endDate = "2026-01-31"
         # Missing daysOfWeek - should fail
     }
 } | ConvertTo-Json -Depth 10

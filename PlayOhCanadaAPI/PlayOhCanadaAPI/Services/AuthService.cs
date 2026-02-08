@@ -49,8 +49,9 @@ namespace PlayOhCanadaAPI.Services
                 return null;
             }
 
-            // Determine role based on isAdmin flag
-            var role = request.IsAdmin ? UserRoles.Admin : UserRoles.User;
+            // Always create regular users during anonymous registration
+            // Admin creation must be done through a separate admin-only endpoint or server-side process
+            var role = UserRoles.User;
 
             // Create new user
             var user = new User

@@ -1,7 +1,7 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS",
+    "builder": "DOCKERFILE",
     "buildCommand": "dotnet restore PlayOhCanadaAPI/PlayOhCanadaAPI.csproj && dotnet publish PlayOhCanadaAPI/PlayOhCanadaAPI.csproj -c Release -o out"
   },
   "deploy": {

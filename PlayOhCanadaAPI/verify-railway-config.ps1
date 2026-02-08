@@ -1,7 +1,7 @@
-# Verify Railway Configuration
-# This script checks if all Railway deployment files are correctly configured
+# Verify Railway Docker Configuration
+# This script checks if all Railway Docker deployment files are correctly configured
 
-Write-Host "?? Railway Configuration Verification" -ForegroundColor Cyan
+Write-Host "?? Railway Docker Configuration Verification" -ForegroundColor Cyan
 Write-Host "=" * 60 -ForegroundColor Gray
 Write-Host ""
 
@@ -21,7 +21,7 @@ if (Test-Path "Dockerfile") {
     }
     
     # Check for correct project path
-    if ($dockerfileContent -match "PlayOhCanadaAPI/PlayOhCanadaAPI.csproj") {
+    if ($dockerfileContent -match "PlayOhCanadaAPI/\*\.csproj" -or $dockerfileContent -match "PlayOhCanadaAPI/PlayOhCanadaAPI\.csproj") {
         Write-Host "  ? Correct project path found" -ForegroundColor Green
     } else {
         Write-Host "  ? Project path may be incorrect" -ForegroundColor Red
@@ -41,32 +41,22 @@ if (Test-Path "Dockerfile") {
 
 Write-Host ""
 
-# Check 2: nixpacks.toml
-Write-Host "?? Checking nixpacks.toml..." -ForegroundColor Yellow
-if (Test-Path "nixpacks.toml") {
-    $nixpacksContent = Get-Content "nixpacks.toml" -Raw
-    if ($nixpacksContent -match "dotnet-sdk_10" -or $nixpacksContent -match "dotnet-sdk_8") {
-        Write-Host "  ? nixpacks.toml exists with .NET SDK configured" -ForegroundColor Green
-    } else {
-        Write-Host "  ??  nixpacks.toml exists but SDK version unclear" -ForegroundColor Yellow
-    }
-} else {
-    Write-Host "  ??  nixpacks.toml not found (optional - Dockerfile will be used)" -ForegroundColor Cyan
-}
-
-Write-Host ""
-
-# Check 3: railway.json
+# Check 2: railway.json
 Write-Host "?? Checking railway.json..." -ForegroundColor Yellow
 if (Test-Path "railway.json") {
-    Write-Host "  ? railway.json exists" -ForegroundColor Green
+    $railwayContent = Get-Content "railway.json" -Raw
+    if ($railwayContent -match "DOCKERFILE") {
+        Write-Host "  ? railway.json exists with Docker builder configured" -ForegroundColor Green
+    } else {
+        Write-Host "  ??  railway.json exists but builder may not be set to DOCKERFILE" -ForegroundColor Yellow
+    }
 } else {
-    Write-Host "  ??  railway.json not found (optional - Dockerfile will be used)" -ForegroundColor Cyan
+    Write-Host "  ??  railway.json not found (Railway will auto-detect Dockerfile)" -ForegroundColor Cyan
 }
 
 Write-Host ""
 
-# Check 4: .dockerignore
+# Check 3: .dockerignore
 Write-Host "?? Checking .dockerignore..." -ForegroundColor Yellow
 if (Test-Path ".dockerignore") {
     Write-Host "  ? .dockerignore exists (optimizes build)" -ForegroundColor Green
@@ -76,7 +66,7 @@ if (Test-Path ".dockerignore") {
 
 Write-Host ""
 
-# Check 5: Project structure
+# Check 4: Project structure
 Write-Host "?? Checking project structure..." -ForegroundColor Yellow
 if (Test-Path "PlayOhCanadaAPI/PlayOhCanadaAPI.csproj") {
     Write-Host "  ? PlayOhCanadaAPI.csproj found at correct location" -ForegroundColor Green
@@ -88,7 +78,7 @@ if (Test-Path "PlayOhCanadaAPI/PlayOhCanadaAPI.csproj") {
 
 Write-Host ""
 
-# Check 6: Git status
+# Check 5: Git status
 Write-Host "?? Checking Git status..." -ForegroundColor Yellow
 $gitStatus = git status --short 2>$null
 
@@ -98,7 +88,7 @@ if ($LASTEXITCODE -eq 0) {
         Write-Host "  ??  $filesChanged uncommitted file(s)" -ForegroundColor Cyan
         
         # Check if Railway files are staged
-        $railwayFiles = @("Dockerfile", "nixpacks.toml", "railway.json")
+        $railwayFiles = @("Dockerfile", "railway.json")
         $stagedFiles = git diff --cached --name-only
         
         $needsStaging = $false
@@ -121,7 +111,7 @@ if ($LASTEXITCODE -eq 0) {
 
 Write-Host ""
 
-# Check 7: .NET SDK version
+# Check 6: .NET SDK version
 Write-Host "?? Checking .NET SDK..." -ForegroundColor Yellow
 $dotnetVersion = dotnet --version 2>$null
 
@@ -141,7 +131,7 @@ if ($LASTEXITCODE -eq 0) {
 
 Write-Host ""
 
-# Check 8: Railway CLI (optional)
+# Check 7: Railway CLI (optional)
 Write-Host "?? Checking Railway CLI..." -ForegroundColor Yellow
 $railwayCli = Get-Command railway -ErrorAction SilentlyContinue
 
@@ -159,7 +149,7 @@ Write-Host "=" * 60 -ForegroundColor Gray
 Write-Host ""
 if ($allChecksPass) {
     Write-Host "?? All critical checks passed!" -ForegroundColor Green
-    Write-Host "? Your project is ready for Railway deployment" -ForegroundColor Green
+    Write-Host "? Your project is ready for Railway Docker deployment" -ForegroundColor Green
     Write-Host ""
     Write-Host "?? Next steps:" -ForegroundColor Cyan
     Write-Host "  1. Run: .\railway-fix-deploy.ps1" -ForegroundColor White
@@ -180,4 +170,6 @@ Write-Host "?? Documentation:" -ForegroundColor Cyan
 Write-Host "  • RAILWAY_QUICKSTART.md - Quick deployment guide" -ForegroundColor White
 Write-Host "  • RAILWAY_BUILD_FIX.md - Detailed troubleshooting" -ForegroundColor White
 Write-Host "  • PROGRESS.md - Full Phase 2 steps" -ForegroundColor White
+Write-Host ""
+Write-Host "?? Build Method: Docker (industry standard)" -ForegroundColor Cyan
 Write-Host ""

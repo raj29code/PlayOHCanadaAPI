@@ -10,6 +10,15 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure forwarded headers for Railway proxy
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor 
+        | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 // Add Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -136,15 +145,18 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
+// Enable OpenAPI and Scalar UI in all environments for API documentation
+app.MapOpenApi();
+app.MapScalarApiReference();
+
+// Use forwarded headers for Railway proxy
+app.UseForwardedHeaders();
+
+// Only use HTTPS redirection in development (Railway handles HTTPS at the edge)
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    
-    // Add Scalar UI for interactive API documentation
-    app.MapScalarApiReference();
+    app.UseHttpsRedirection();
 }
-
-app.UseHttpsRedirection();
 
 // Enable CORS - must be placed before Authentication and Authorization
 app.UseCors("AllowFrontend");

@@ -69,6 +69,40 @@ public class SportsController : ControllerBase
     }
 
     /// <summary>
+    /// Update an existing sport (Admin only)
+    /// </summary>
+    [HttpPut("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
+    public async Task<IActionResult> UpdateSport(int id, UpdateSportDto dto)
+    {
+        var sport = await _context.Sports.FindAsync(id);
+        if (sport == null)
+        {
+            return NotFound(new { message = "Sport not found" });
+        }
+
+        // Check if new name already exists (excluding current sport)
+        if (!string.IsNullOrWhiteSpace(dto.Name) && dto.Name != sport.Name)
+        {
+            if (await _context.Sports.AnyAsync(s => s.Name == dto.Name && s.Id != id))
+            {
+                return BadRequest(new { message = "A sport with this name already exists" });
+            }
+            sport.Name = dto.Name;
+        }
+
+        // Update icon URL if provided
+        if (dto.IconUrl != null)
+        {
+            sport.IconUrl = dto.IconUrl;
+        }
+
+        await _context.SaveChangesAsync();
+
+        return Ok(sport);
+    }
+
+    /// <summary>
     /// Delete a sport (Admin only)
     /// </summary>
     [HttpDelete("{id}")]

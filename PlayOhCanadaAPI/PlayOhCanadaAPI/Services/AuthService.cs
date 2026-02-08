@@ -49,6 +49,9 @@ namespace PlayOhCanadaAPI.Services
                 return null;
             }
 
+            // Determine role based on isAdmin flag
+            var role = request.IsAdmin ? UserRoles.Admin : UserRoles.User;
+
             // Create new user
             var user = new User
             {
@@ -56,14 +59,14 @@ namespace PlayOhCanadaAPI.Services
                 Email = request.Email.ToLowerInvariant(),
                 Phone = request.Phone,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                Role = UserRoles.User,
+                Role = role,
                 CreatedAt = DateTime.UtcNow
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("New user registered: {Email}", user.Email);
+            _logger.LogInformation("New {Role} registered: {Email}", role, user.Email);
 
             // Generate token
             var token = _jwtService.GenerateToken(user);

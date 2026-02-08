@@ -23,8 +23,32 @@ namespace PlayOhCanadaAPI.Controllers
         /// <summary>
         /// Register a new user account
         /// </summary>
-        /// <param name="request">Registration details including name, email, and password</param>
+        /// <param name="request">Registration details including name, email, password, and optional isAdmin flag</param>
         /// <returns>Authentication token and user details</returns>
+        /// <remarks>
+        /// Sample request to create a regular user:
+        /// 
+        ///     POST /api/auth/register
+        ///     {
+        ///        "name": "John Doe",
+        ///        "email": "john@example.com",
+        ///        "phone": "+1234567890",
+        ///        "password": "SecurePass123!",
+        ///        "confirmPassword": "SecurePass123!",
+        ///        "isAdmin": false
+        ///     }
+        ///     
+        /// Sample request to create an admin user:
+        /// 
+        ///     POST /api/auth/register
+        ///     {
+        ///        "name": "Admin User",
+        ///        "email": "admin@example.com",
+        ///        "password": "AdminPass123!",
+        ///        "confirmPassword": "AdminPass123!",
+        ///        "isAdmin": true
+        ///     }
+        /// </remarks>
         /// <response code="200">Registration successful</response>
         /// <response code="400">Invalid request or user already exists</response>
         [HttpPost("register")]

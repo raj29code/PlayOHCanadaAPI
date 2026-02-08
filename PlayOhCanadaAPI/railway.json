@@ -2,10 +2,9 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "DOCKERFILE",
-    "buildCommand": "dotnet restore PlayOhCanadaAPI/PlayOhCanadaAPI.csproj && dotnet publish PlayOhCanadaAPI/PlayOhCanadaAPI.csproj -c Release -o out"
+    "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "startCommand": "cd out && dotnet PlayOhCanadaAPI.dll",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }

@@ -6,13 +6,12 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Copy project file and restore dependencies
-COPY ["PlayOhCanadaAPI/PlayOhCanadaAPI.csproj", "PlayOhCanadaAPI/"]
-RUN dotnet restore "PlayOhCanadaAPI/PlayOhCanadaAPI.csproj"
+COPY *.csproj ./
+RUN dotnet restore PlayOhCanadaAPI.csproj
 
 # Copy everything else and build
-COPY PlayOhCanadaAPI/ PlayOhCanadaAPI/
-WORKDIR /src/PlayOhCanadaAPI
-RUN dotnet publish "PlayOhCanadaAPI.csproj" -c Release -o /app/publish --no-restore
+COPY . ./
+RUN dotnet publish -c Release -o /app/publish --no-restore
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime

@@ -22,6 +22,12 @@ namespace PlayOhCanadaAPI.Models.DTOs
         [Required]
         [Compare(nameof(Password), ErrorMessage = "Passwords do not match")]
         public string ConfirmPassword { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Flag to indicate if the user should be created as an admin
+        /// Defaults to false (regular user)
+        /// </summary>
+        public bool IsAdmin { get; set; } = false;
     }
 
     public class LoginRequest

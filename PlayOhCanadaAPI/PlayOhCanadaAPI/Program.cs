@@ -74,6 +74,15 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenBlacklistService, TokenBlacklistService>();
 
+// Register Background Services
+// TODO: FUTURE - Remove this when migrating to Azure Function/Lambda
+// This background service should be replaced with a serverless function for:
+// - Better separation of concerns
+// - Independent scaling
+// - Cost optimization (pay per execution)
+// - No impact on API performance
+builder.Services.AddHostedService<ScheduleCleanupService>();
+
 builder.Services.AddControllers();
 
 // Configure OpenAPI - Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

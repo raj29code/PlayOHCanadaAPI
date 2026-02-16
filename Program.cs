@@ -20,8 +20,60 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 // Add Database Context
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Railway provides DATABASE_URL in PostgreSQL format, convert it to Npgsql format
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    try
+    {
+        // Parse Railway's DATABASE_URL (postgresql://user:pass@host:port/db)
+        // Convert to Npgsql format
+        var uri = new Uri(databaseUrl);
+        var userInfo = uri.UserInfo.Split(':');
+        
+        if (userInfo.Length != 2)
+        {
+            throw new InvalidOperationException("DATABASE_URL is missing username or password");
+        }
+        
+        connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Failed to parse DATABASE_URL: {ex.Message}");
+        
+        // Fallback: Try to construct from individual Railway variables
+        var pgHost = Environment.GetEnvironmentVariable("PGHOST");
+        var pgPort = Environment.GetEnvironmentVariable("PGPORT");
+        var pgDatabase = Environment.GetEnvironmentVariable("PGDATABASE");
+        var pgUser = Environment.GetEnvironmentVariable("PGUSER");
+        var pgPassword = Environment.GetEnvironmentVariable("PGPASSWORD");
+        
+        if (!string.IsNullOrEmpty(pgHost) && !string.IsNullOrEmpty(pgUser) && !string.IsNullOrEmpty(pgPassword))
+        {
+            Console.WriteLine("Using individual PostgreSQL environment variables");
+            connectionString = $"Host={pgHost};Port={pgPort ?? "5432"};Database={pgDatabase ?? "railway"};Username={pgUser};Password={pgPassword};SSL Mode=Require;Trust Server Certificate=true";
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                "Database connection not configured. Please set DATABASE_URL or PGHOST, PGUSER, and PGPASSWORD environment variables in Railway.");
+        }
+    }
+}
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException(
+        "Database connection string is not configured. Please check Railway environment variables.");
+}
+
+Console.WriteLine($"Using database connection: Host={new Npgsql.NpgsqlConnectionStringBuilder(connectionString).Host}");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
 // Add JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -103,14 +155,20 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    if (app.Environment.IsDevelopment())
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    
+    try
     {
-        // Automatically apply migrations in development
+        // Apply migrations in all environments (including Production)
+        // Railway will run this on startup, ensuring database is always up-to-date
+        logger.LogInformation("Starting database migration...");
         await dbContext.Database.MigrateAsync();
+        logger.LogInformation("Database migration completed successfully");
         
         // Seed admin user if it doesn't exist
         if (!await dbContext.Users.AnyAsync(u => u.Email == "admin@playohcanada.com"))
         {
+            logger.LogInformation("Seeding admin user...");
             var adminUser = new User
             {
                 Name = "Admin User",
@@ -124,11 +182,17 @@ using (var scope = app.Services.CreateScope())
             
             dbContext.Users.Add(adminUser);
             await dbContext.SaveChangesAsync();
+            logger.LogInformation("Admin user created successfully");
+        }
+        else
+        {
+            logger.LogInformation("Admin user already exists, skipping seeding");
         }
         
         // Seed sports if they don't exist
         if (!await dbContext.Sports.AnyAsync())
         {
+            logger.LogInformation("Seeding default sports...");
             var sports = new[]
             {
                 new Sport { Name = "Tennis", IconUrl = "https://cdn-icons-png.flaticon.com/512/889/889456.png" },
@@ -140,7 +204,17 @@ using (var scope = app.Services.CreateScope())
             };
             dbContext.Sports.AddRange(sports);
             await dbContext.SaveChangesAsync();
+            logger.LogInformation("Seeded {Count} sports successfully", sports.Length);
         }
+        else
+        {
+            logger.LogInformation("Sports already exist, skipping seeding");
+        }
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while migrating or seeding the database");
+        throw; // Re-throw to prevent app from starting with broken database
     }
 }
 

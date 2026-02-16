@@ -3,8 +3,48 @@
   "WorkspaceRootPath": "C:\\myProject\\PlayOHCanadaAPI\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\test-railway-deployment.ps1||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:test-railway-deployment.ps1||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\railway_deployment_guide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:railway_deployment_guide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\progress.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:progress.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\quick_start_railway.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:quick_start_railway.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\railway_database_fix.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:railway_database_fix.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\railway_db_connection_checklist.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:railway_db_connection_checklist.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\railway_variables_cleanup.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:railway_variables_cleanup.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\railway_variables_quick.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:railway_variables_quick.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|c:\\myproject\\playohcanadaapi\\railway_variables_final_answer.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{D4FE70F2-9C81-9DAE-93BC-CBAEC080D145}|PlayOhCanadaAPI.csproj|solutionrelative:railway_variables_final_answer.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,20 +54,149 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Dockerfile",
-              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\Dockerfile",
-              "RelativeDocumentMoniker": "Dockerfile",
-              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\Dockerfile",
-              "RelativeToolTip": "Dockerfile",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAA0AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-02-08T18:10:28.471Z",
+              "DocumentIndex": 10,
+              "Title": "RAILWAY_VARIABLES_FINAL_ANSWER.md",
+              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_VARIABLES_FINAL_ANSWER.md",
+              "RelativeDocumentMoniker": "RAILWAY_VARIABLES_FINAL_ANSWER.md",
+              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_VARIABLES_FINAL_ANSWER.md",
+              "RelativeToolTip": "RAILWAY_VARIABLES_FINAL_ANSWER.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAANoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-16T18:32:25.196Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "RAILWAY_VARIABLES_QUICK.md",
+              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_VARIABLES_QUICK.md",
+              "RelativeDocumentMoniker": "RAILWAY_VARIABLES_QUICK.md",
+              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_VARIABLES_QUICK.md",
+              "RelativeToolTip": "RAILWAY_VARIABLES_QUICK.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-16T18:31:24.845Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "RAILWAY_VARIABLES_CLEANUP.md",
+              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_VARIABLES_CLEANUP.md",
+              "RelativeDocumentMoniker": "RAILWAY_VARIABLES_CLEANUP.md",
+              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_VARIABLES_CLEANUP.md",
+              "RelativeToolTip": "RAILWAY_VARIABLES_CLEANUP.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-16T18:31:04.581Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-16T18:08:29.254Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAOAAAAAAAAAAAAAUwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-08T18:23:12.024Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "RAILWAY_DATABASE_FIX.md",
+              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_DATABASE_FIX.md",
+              "RelativeDocumentMoniker": "RAILWAY_DATABASE_FIX.md",
+              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_DATABASE_FIX.md",
+              "RelativeToolTip": "RAILWAY_DATABASE_FIX.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAP8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-16T18:25:21.028Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "RAILWAY_DB_CONNECTION_CHECKLIST.md",
+              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_DB_CONNECTION_CHECKLIST.md",
+              "RelativeDocumentMoniker": "RAILWAY_DB_CONNECTION_CHECKLIST.md",
+              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_DB_CONNECTION_CHECKLIST.md",
+              "RelativeToolTip": "RAILWAY_DB_CONNECTION_CHECKLIST.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-16T18:26:14.896Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "test-railway-deployment.ps1",
+              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\test-railway-deployment.ps1",
+              "RelativeDocumentMoniker": "test-railway-deployment.ps1",
+              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\test-railway-deployment.ps1",
+              "RelativeToolTip": "test-railway-deployment.ps1",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-02-08T18:39:43.144Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "QUICK_START_RAILWAY.md",
+              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\QUICK_START_RAILWAY.md",
+              "RelativeDocumentMoniker": "QUICK_START_RAILWAY.md",
+              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\QUICK_START_RAILWAY.md",
+              "RelativeToolTip": "QUICK_START_RAILWAY.md",
+              "ViewState": "AgIAAHkAAAAAAAAAAIBJwHsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-08T18:41:35.69Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "RAILWAY_DEPLOYMENT_GUIDE.md",
+              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_DEPLOYMENT_GUIDE.md",
+              "RelativeDocumentMoniker": "RAILWAY_DEPLOYMENT_GUIDE.md",
+              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\RAILWAY_DEPLOYMENT_GUIDE.md",
+              "RelativeToolTip": "RAILWAY_DEPLOYMENT_GUIDE.md",
+              "ViewState": "AgIAAL0BAAAAAAAAAIBJwL8BAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-08T18:39:21.619Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "PROGRESS.md",
+              "DocumentMoniker": "C:\\myProject\\PlayOHCanadaAPI\\PROGRESS.md",
+              "RelativeDocumentMoniker": "PROGRESS.md",
+              "ToolTip": "C:\\myProject\\PlayOHCanadaAPI\\PROGRESS.md",
+              "RelativeToolTip": "PROGRESS.md",
+              "ViewState": "AgIAANMDAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-08T18:41:00.433Z"
             }
           ]
         }
